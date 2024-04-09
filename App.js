@@ -7,7 +7,7 @@ import LoginScreen from './LoginScreen';
 import MenuScreen from './MenuScreen';
 import DisponibilidadScreen from './DisponibilidadScreen';
 import HorariosScreen from './HorariosScreen';
-// import AulasScreen from './AulasScreen';
+import AulasScreen from './AulasScreen';
 
 const Stack = createStackNavigator();
 
@@ -19,6 +19,7 @@ export default function App() {
         <Stack.Screen name="MenuScreen" component={MenuScreen} />
         <Stack.Screen name="DisponibilidadScreen" component={DisponibilidadScreen} />
         <Stack.Screen name="HorariosScreen" component={HorariosScreen} />
+        <Stack.Screen name="AulasScreen" component={AulasScreen} />
         
       </Stack.Navigator>
     </NavigationContainer>
