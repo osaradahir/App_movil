@@ -10,7 +10,7 @@ const LoginScreen = ({  }) => {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://localhost:3000/login', {
+      const response = await fetch('https://d9hpth2q-3000.usw3.devtunnels.ms/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -37,7 +37,10 @@ const LoginScreen = ({  }) => {
       alert('Error', 'An error occurred while trying to log in');
     }
   };
-
+  
+  
+  
+  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>GHEU</Text>
@@ -65,6 +68,9 @@ const LoginScreen = ({  }) => {
         </View>
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Iniciar Sesión</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('LoginGrupoScreen')} style={styles.link}>
+          <Text>Eres estudiante</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -118,6 +124,10 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#000',
+  },
+  link: {
+    alignItems: 'center',
+    marginTop: 20, // Agrega un margen superior para separarlo del botón
   },
 });
 
