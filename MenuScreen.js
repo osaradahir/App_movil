@@ -1,113 +1,94 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Importar useNavigation
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Modal } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-export default function AulasScreen() {
-  const navigation = useNavigation(); // Obtener la función de navegación
-  const [nombreAula, setNombreAula] = useState(null);
-  const [aulaId, setAulaId] = useState(null);
-  const [estadoAula, setEstadoAula] = useState(null);
-  const [aulaFija, setAulaFija] = useState(false); // Nuevo estado para controlar si el nombre del aula se ha fijado
+const MenuScreen = () => {
+  const navigation = useNavigation();
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
 
-  useEffect(() => {
-    // Obtener información del aula al cargar la pantalla
-    fetch('https://d9hpth2q-3000.usw3.devtunnels.ms/info_aula')
-      .then(response => response.json())
-      .then(data => {
-        // Solo establece el nombre del aula si aún no se ha fijado
-        if (!aulaFija) {
-          setNombreAula(data.nombre_aula);
-          setAulaId(data.id_aula);
-          setAulaFija(true); // Marca el nombre del aula como fijo
-        }
-      })
-      .catch(error => console.error('Error al obtener la información del aula:', error));
-  }, [aulaFija]); // Dependencia actualizada
+  const handleDisponibilidad = () => {
+    navigation.navigate('DisponibilidadScreen');
+  };
 
-  const cambiarEstado = (nuevoEstado) => {
-    // Enviar el nuevo estado al servidor
-    fetch('https://d9hpth2q-3000.usw3.devtunnels.ms/cambiar_estado_aula', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ estado: nuevoEstado })
-    })
-    .then(response => response.json())
-    .then(data => {
-      // Actualizar el estado del aula
-      setEstadoAula(nuevoEstado);
-      // Mostrar un mensaje según el estado
-      if (nuevoEstado === 1) {
-        Alert.alert('Aula Abierta', 'El aula ha sido abierta.');
-      } else {
-        Alert.alert('Aula Cerrada', 'El aula ha sido cerrada.');
-      }
-    })
-    .catch(error => {
-      console.error('Error al actualizar el estado del aula:', error);
-      Alert.alert('Error', 'Hubo un error al actualizar el estado del aula.');
-    });
+  const handleHorarios = () => {
+    navigation.navigate('HorariosScreen');
+  };
+
+  const handleAulas = () => {
+    navigation.navigate('AulasScreen');
+  };
+
+  const handleLogout = () => {
+    setIsMenuVisible(false); // Cerrar el menú desplegable instantáneamente
+    // Aquí puedes implementar la lógica para cerrar sesión
+    navigation.navigate('LoginScreen');
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>{nombreAula !== null ? nombreAula : 'No se encontró un aula asignada para esta hora'}</Text>
-      </View>
-      <View style={styles.estadoContainer}>
-        <Text style={styles.estadoText}>{estadoAula === 1 ? 'Abierto' : estadoAula === 0 ? 'Cerrado' : ''}</Text>
-      </View>
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => cambiarEstado(1)}
-        >
-          <Text style={styles.buttonText}>Cambiar a Abierto</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => cambiarEstado(0)}
-        >
-          <Text style={styles.buttonText}>Cambiar a Cerrado</Text>
-        </TouchableOpacity>
-      </View>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
-        <Text style={styles.buttonText}>Volver</Text>
+      <Text style={styles.title}>Menú</Text>
+      {/* Implementación del icono con menú desplegable */}
+      <TouchableOpacity style={styles.menuIconContainer} onPress={() => setIsMenuVisible(true)}>
+        <Image
+          source={require('./default-avatar-2.png')} // Ruta de la imagen PNG
+          style={styles.menuIcon}
+        />
       </TouchableOpacity>
+
+      {/* Menú desplegable */}
+      <Modal
+        visible={isMenuVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setIsMenuVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
+            <Text style={styles.menuText}>Cerrar Sesión</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+      {/* Fin del menú desplegable */}
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button} onPress={handleDisponibilidad}>
+          <Text style={styles.buttonText}>Disponibilidad</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleHorarios}>
+          <Text style={styles.buttonText}>Horarios</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleAulas}>
+          <Text style={styles.buttonText}>Aulas</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    paddingTop: 50,
-  },
-  header: {
-    width: '100%',
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  headerText: {
-    fontSize: 30,
+  title: {
+    fontSize: 32,
     fontWeight: 'bold',
+    marginBottom: 30,
   },
-  buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around', // Centra los botones y agrega espacio entre ellos
-    marginTop: 10
+  buttonContainer: {
+    width: '80%',
+    alignItems: 'center',
   },
   button: {
     backgroundColor: '#fff',
-    width: '40%', // Se redujo el tamaño para dejar espacio entre los botones
+    width: '70%',
     borderRadius: 20,
     borderWidth: 1,
     borderColor: '#000',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginBottom: 30,
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    marginBottom: 20,
     alignItems: 'center',
   },
   buttonText: {
@@ -115,11 +96,38 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  estadoContainer: {
-    marginTop: 20,
+  menuIconContainer: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    zIndex: 999,
   },
-  estadoText: {
-    fontSize: 25,
+  menuIcon: {
+    width: 50,
+    height: 50,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  menuItem: {
+    backgroundColor: '#fff',
+    width: '80%',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#000',
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  menuText: {
+    color: '#000',
+    fontSize: 18,
     fontWeight: 'bold',
   },
 });
+
+export default MenuScreen;
