@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Picker } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
 const HorariosScreen = ({ navigation }) => {
   const [horarios, setHorarios] = useState([]);
@@ -10,7 +11,7 @@ const HorariosScreen = ({ navigation }) => {
     // Función para obtener los periodos
     const fetchPeriodos = async () => {
       try {
-        const response = await fetch('http://localhost:3000/periodos');
+        const response = await fetch('https://d9hpth2q-3000.usw3.devtunnels.ms/periodos');
         const data = await response.json();
         setPeriodos(data);
       } catch (error) {
@@ -26,7 +27,7 @@ const HorariosScreen = ({ navigation }) => {
     // Función para obtener los horarios según el periodo seleccionado
     const fetchHorarios = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/horario?periodo=${selectedPeriodo}`);
+        const response = await fetch(`https://d9hpth2q-3000.usw3.devtunnels.ms/horario?periodo=${selectedPeriodo}`);
         const data = await response.json();
         console.log("Datos de la API:", data); // Imprimir datos en la consola
 
@@ -60,7 +61,7 @@ const HorariosScreen = ({ navigation }) => {
       '20:00 - 21:00',
     ];
   
-    const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    const diasSemana = ['L', 'M', 'X', 'J', 'V', 'S'];
   
     return (
       <>
@@ -73,7 +74,7 @@ const HorariosScreen = ({ navigation }) => {
   
               return (
                 <Text key={dayIndex} style={styles.cell}>
-                  {horarioActual ? `${horarioActual.nombre_materia} - ${horarioActual.nombre_grupo}` : '-'}
+                  {horarioActual ? `${horarioActual.nombre_aula} ${horarioActual.nombre_materia} ${horarioActual.nombre_grupo}` : '-'}
                 </Text>
               );
             })}
@@ -116,12 +117,12 @@ const HorariosScreen = ({ navigation }) => {
         <View style={styles.table}>
           <View style={styles.headerRow}>
             <Text style={styles.headerCell}>Horas</Text>
-            <Text style={styles.headerCell}>Lunes</Text>
-            <Text style={styles.headerCell}>Martes</Text>
-            <Text style={styles.headerCell}>Miércoles</Text>
-            <Text style={styles.headerCell}>Jueves</Text>
-            <Text style={styles.headerCell}>Viernes</Text>
-            <Text style={styles.headerCell}>Sábado</Text>
+            <Text style={styles.headerCell}>L</Text>
+            <Text style={styles.headerCell}>M</Text>
+            <Text style={styles.headerCell}>X</Text>
+            <Text style={styles.headerCell}>J</Text>
+            <Text style={styles.headerCell}>V</Text>
+            <Text style={styles.headerCell}>S</Text>
           </View>
           {/* Filas de la tabla */}
           {renderHorariosRow()}
@@ -138,20 +139,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    padding: 20,
+    paddingTop: 45,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   selectContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
   },
   tableContainer: {
-    width: 450,
+    width: 350,
     height: 250,
   },
   table: {
@@ -173,11 +173,13 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
     padding: 5,
+    fontSize: 12,
   },
   cell: {
     flex: 1,
     textAlign: 'center',
     padding: 5,
+    fontSize: 10,
   },
   button: {
     backgroundColor: '#fff',
