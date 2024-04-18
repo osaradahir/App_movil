@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Importar useNavigation
 
 export default function AulasScreen() {
+  const navigation = useNavigation(); // Obtener la función de navegación
   const [nombreAula, setNombreAula] = useState(null);
   const [aulaId, setAulaId] = useState(null);
   const [estadoAula, setEstadoAula] = useState(null);
@@ -9,7 +11,7 @@ export default function AulasScreen() {
 
   useEffect(() => {
     // Obtener información del aula al cargar la pantalla
-    fetch('http://localhost:3000/info_aula')
+    fetch('https://d9hpth2q-3000.usw3.devtunnels.ms/info_aula')
       .then(response => response.json())
       .then(data => {
         // Solo establece el nombre del aula si aún no se ha fijado
@@ -24,7 +26,7 @@ export default function AulasScreen() {
 
   const cambiarEstado = (nuevoEstado) => {
     // Enviar el nuevo estado al servidor
-    fetch('http://localhost:3000/cambiar_estado_aula', {
+    fetch('https://d9hpth2q-3000.usw3.devtunnels.ms/cambiar_estado_aula', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -70,6 +72,9 @@ export default function AulasScreen() {
           <Text style={styles.buttonText}>Cambiar a Cerrado</Text>
         </TouchableOpacity>
       </View>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
+        <Text style={styles.buttonText}>Volver</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -96,13 +101,13 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#fff',
-    width: '45%', // Se redujo el tamaño para dejar espacio entre los botones
+    width: '40%', // Se redujo el tamaño para dejar espacio entre los botones
     borderRadius: 20,
     borderWidth: 1,
     borderColor: '#000',
-    paddingVertical: 15,
+    paddingVertical: 10,
     paddingHorizontal: 20,
-    marginBottom: 20,
+    marginBottom: 30,
     alignItems: 'center',
   },
   buttonText: {
